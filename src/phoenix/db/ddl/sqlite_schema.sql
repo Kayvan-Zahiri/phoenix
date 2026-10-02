@@ -19,6 +19,16 @@ CREATE TABLE annotation_configs (
 );
 
 
+-- Table: deployment_identity
+-- --------------------------
+CREATE TABLE deployment_identity (
+    id INTEGER NOT NULL,
+    seed BLOB NOT NULL,
+    CONSTRAINT pk_deployment_identity PRIMARY KEY (id),
+    CONSTRAINT "ck_deployment_identity_`singleton`" CHECK (id = 1)
+);
+
+
 -- Table: eval_work_cursors
 -- ------------------------
 CREATE TABLE eval_work_cursors (
@@ -479,6 +489,7 @@ CREATE TABLE api_keys (
     expires_at TIMESTAMP,
     scopes JSONB,
     audience JSONB,
+    token_hash BLOB,
     CONSTRAINT fk_api_keys_user_id_users
         FOREIGN KEY (user_id)
         REFERENCES users (id)
@@ -1279,6 +1290,7 @@ CREATE TABLE password_reset_tokens (
     user_id INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     expires_at TIMESTAMP NOT NULL,
+    token_hash BLOB,
     CONSTRAINT fk_password_reset_tokens_user_id_users
         FOREIGN KEY (user_id)
         REFERENCES users (id)
@@ -1714,6 +1726,7 @@ CREATE TABLE refresh_tokens (
     scopes JSONB,
     audience JSONB,
     consumed_at TIMESTAMP,
+    token_hash BLOB,
     CONSTRAINT fk_refresh_tokens_oauth2_grant_id_oauth2_grants
         FOREIGN KEY (oauth2_grant_id)
         REFERENCES oauth2_grants (id)
@@ -1739,6 +1752,7 @@ CREATE TABLE access_tokens (
     refresh_token_id INTEGER NOT NULL,
     scopes JSONB,
     audience JSONB,
+    token_hash BLOB,
     CONSTRAINT fk_access_tokens_refresh_token_id_refresh_tokens
         FOREIGN KEY (refresh_token_id)
         REFERENCES refresh_tokens (id)
